@@ -1,99 +1,91 @@
-# VNET + Subnets
-module "vnet" {
-  source              = "../../modules/vnet"
-  vnet_name           = var.vnet_name
-  location            = var.location
-  resource_group_name = var.resource_group_name
-  address_space       = var.address_space
-  subnets             = var.subnets
-}
-
-# App Gateway
-module "app_gateway" {
-  source              = "../../modules/app_gateway"
-  name                = "dev-app-gw"
-  location            = var.location
-  resource_group_name = var.resource_group_name
-  subnet_id           = module.vnet.subnet_ids["app_gateway"]
-  public_ip_name      = "dev-appgw-pip"
-}
-
-# Static Web App
-module "static_webapp" {
-  source              = "../../modules/static_webapp"
-  location            = var.location
-  resource_group_name = var.resource_group_name
-  subnet_id           = module.vnet.subnet_ids["static_webapp"]
-}
-
-# App Service Plan
 module "app_service" {
-  source              = "../../modules/app_service"
-  location            = var.location
-  resource_group_name = var.resource_group_name
-  subnet_id           = module.vnet.subnet_ids["app_service"]
+  source   = "../../modules/app_service"
+  name     = var.app_service_name
+  location = var.app_service_location
+  tags     = var.app_service_tags
+  # Add other variables as needed
 }
 
-# Azure SQL
+module "vnet" {
+  source         = "../../modules/vnet"
+  name           = var.vnet_name
+  address_space  = var.vnet_address_space
+  location       = var.vnet_location
+  tags           = var.vnet_tags
+  # Add other variables as needed
+}
+
+module "app_gateway" {
+  source   = "../../modules/app_gateway"
+  name     = var.app_gateway_name
+  location = var.app_gateway_location
+  tags     = var.app_gateway_tags
+  # Add other variables as needed
+}
+
 module "azure_sql" {
-  source              = "../../modules/azure_sql"
-  location            = var.location
-  resource_group_name = var.resource_group_name
-  subnet_id           = module.vnet.subnet_ids["sql"]
+  source         = "../../modules/azure_sql"
+  name           = var.azure_sql_name
+  location       = var.azure_sql_location
+  admin_username = var.azure_sql_admin_username
+  admin_password = var.azure_sql_admin_password
+  tags           = var.azure_sql_tags
+  # Add other variables as needed
 }
 
-# Key Vault
-module "key_vault" {
-  source              = "../../modules/key_vault"
-  location            = var.location
-  resource_group_name = var.resource_group_name
-  subnet_id           = module.vnet.subnet_ids["private_endpts"]
-}
-
-# DevOps Agent VM
-module "devops_agent_vm" {
-  source              = "../../modules/devops_agent_vm"
-  name                = "devops-agent"
-  location            = var.location
-  resource_group_name = var.resource_group_name
-  subnet_id           = module.vnet.subnet_ids["devops_agent_vm"]
-  size                = "Standard_DS2_v2"
-  admin_username      = "devopsadmin"
-  admin_password      = "YourP@ssword1234" # Store in vault ideally
-}
-
-# Bastion Host
 module "bastion" {
-  source              = "../../modules/bastion"
-  location            = var.location
-  resource_group_name = var.resource_group_name
-  subnet_id           = module.vnet.subnet_ids["bastion"]
+  source   = "../../modules/bastion"
+  name     = var.bastion_name
+  location = var.bastion_location
+  tags     = var.bastion_tags
+  # Add other variables as needed
 }
 
-# Diagnostics
-module "diagnostics" {
-  source              = "../../modules/diagnostics"
-  location            = var.location
-  resource_group_name = var.resource_group_name
+module "key_vault" {
+  source   = "../../modules/key_vault"
+  name     = var.key_vault_name
+  location = var.key_vault_location
+  tags     = var.key_vault_tags
+  # Add other variables as needed
 }
 
-# Private DNS
 module "private_dns" {
-  source              = "../../modules/private_dns"
-  resource_group_name = var.resource_group_name
-  zone_name           = "privatelink.database.windows.net"
-  vnet_id             = module.vnet.vnet_id
+  source         = "../../modules/private_dns"
+  name           = var.private_dns_name
+  resource_group = var.private_dns_resource_group
+  tags           = var.private_dns_tags
+  # Add other variables as needed
 }
 
-# Private Endpoints for SQL
-module "pe_sql" {
-  source                = "../../modules/private_endpoint"
-  name                  = "pe-sql"
-  location              = var.location
-  resource_group_name   = var.resource_group_name
-  subnet_id             = module.vnet.subnet_ids["private_endpts"]
-  target_resource_id    = module.azure_sql.sql_id
-  subresource_names     = ["sqlServer"]
+module "private_endpoint" {
+  source   = "../../modules/private_endpoint"
+  name     = var.private_endpoint_name
+  location = var.private_endpoint_location
+  tags     = var.private_endpoint_tags
+  # Add other variables as needed
 }
 
-# Add similar modules for other private endpoints as needed
+module "static_webapp" {
+  source   = "../../modules/static_webapp"
+  name     = var.static_webapp_name
+  location = var.static_webapp_location
+  tags     = var.static_webapp_tags
+  # Add other variables as needed
+}
+
+module "devops_agent_vm" {
+  source   = "../../modules/devops_agent_vm"
+  name     = var.devops_agent_vm_name
+  location = var.devops_agent_vm_location
+  vm_size  = var.devops_agent_vm_size
+  tags     = var.devops_agent_vm_tags
+  # Add other variables as needed
+}
+
+module "diagnostics" {
+  source   = "../../modules/diagnostics"
+  name     = var.diagnostics_name
+  location = var.diagnostics_location
+  tags     = var.diagnostics_tags
+  # Add other variables as needed
+}

@@ -1,6 +1,7 @@
-resource "azurerm_static_site" "this" {
+resource "azurerm_static_web_app" "example" {
   name                = var.name
-  location            = var.location
   resource_group_name = var.resource_group_name
-  sku_size            = "Free"
+  location            = var.location
+  repository_url      = var.repository_url
+
 }

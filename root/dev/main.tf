@@ -73,19 +73,19 @@ module "static_webapp" {
   # Add other variables as needed
 }
 
-module "devops_agent_vm" {
-  source   = "../../modules/devops_agent_vm"
-  name     = var.devops_agent_vm_name
-  location = var.devops_agent_vm_location
-  vm_size  = var.devops_agent_vm_size
-  tags     = var.devops_agent_vm_tags
-  # Add other variables as needed
-}
+# module "devops_agent_vm" {
+#   source   = "../../modules/devops_agent_vm"
+#   name     = var.devops_agent_vm_name
+#   location = var.devops_agent_vm_location
+#   vm_size  = var.devops_agent_vm_size
+#   tags     = var.devops_agent_vm_tags
+#   # Add other variables as needed
+# }
 
-module "diagnostics" {
-  source   = "../../modules/diagnostics"
-  name     = var.diagnostics_name
-  location = var.diagnostics_location
-  tags     = var.diagnostics_tags
-  # Add other variables as needed
-}
+# module "diagnostics" {
+#   source   = "../../modules/diagnostics"
+#   name     = var.diagnostics_name
+#   location = var.diagnostics_location
+#   tags     = var.diagnostics_tags
+#   # Add other variables as needed
+# }
